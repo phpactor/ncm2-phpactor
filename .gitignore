@@ -1,0 +1,5 @@
+/vendor
+/test.py
+/test.php
+/composer.lock
+__pycache__
