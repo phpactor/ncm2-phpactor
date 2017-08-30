@@ -23,6 +23,7 @@ import json
 import os
 import subprocess
 import glob
+import re
 
 logger = getLogger(__name__)
 
@@ -72,7 +73,52 @@ class Source(Base):
         matches = []
 
         for e in result['suggestions']:
-            matches.append(dict(word=e['name'], menu=e['info']))
+            menu = e['info']
+            word = e['name']
+            t = e['type']
+
+            item = dict(word=word, menu=menu)
+
+            # snippet support
+            m = re.search(r'(\w+\s+)?\w+\((.*)\)', menu)
+
+            if m and t == 'f':
+
+                params = m.group(2)
+
+                placeholders = []
+                num = 1
+                snip_args = ''
+
+                if params != '':
+
+                    params = params.split(',')
+
+                    for param in params:
+
+                        if "=" in param:
+                            # skip params with default value
+                            break
+                        else:
+                            param = param.strip()
+
+                            ph = self.snippet_placeholder(num, param)
+                            placeholders.append(ph)
+                            num += 1
+
+                    snip_args = ', '.join(placeholders)
+
+                    if len(placeholders) == 0:
+                        # don't jump out of parentheses if function has
+                        # parameters
+                        snip_args = self.snippet_placeholder(1)
+
+                ph0 = self.snippet_placeholder(0)
+                snippet = '%s(%s)%s' % (word, snip_args, ph0)
+
+                item['snippet'] = snippet
+
+            matches.append(item)
 
         logger.debug("startcol [%s] matches: [%s]", startcol, matches)
 
