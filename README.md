@@ -1,7 +1,7 @@
 [phpactor](https://github.com/phpactor/phpactor) integration for
 [nvim-completion-manager](https://github.com/roxma/nvim-completion-manager)
 
-![ncm-phpactor](https://user-images.githubusercontent.com/4538941/29902244-691884b2-8e2f-11e7-8a91-6dfe55ecdecb.gif)
+![phpactor](https://user-images.githubusercontent.com/4538941/29902335-1c27a376-8e30-11e7-83c9-8db2dc4beb5a.gif)
 
 
 ## Installation
