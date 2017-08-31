@@ -9,7 +9,10 @@
 Assuming you're using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-" requires phpactor/phpactor
+" requires nvim-completion-manager
+Plug 'roxma/nvim-completion-manager'
+
+" requires phpactor
 Plug 'phpactor/phpactor' ,  {'do': 'composer install'}
 
 Plug 'roxma/ncm-phpactor'
