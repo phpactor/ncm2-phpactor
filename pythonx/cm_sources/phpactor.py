@@ -100,8 +100,7 @@ class Source(Base):
                             # skip params with default value
                             break
                         else:
-                            param = param.strip()
-
+                            param = re.search(r'\$\w+', param).group()
                             ph = self.snippet_placeholder(num, param)
                             placeholders.append(ph)
                             num += 1
