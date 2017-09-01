@@ -50,7 +50,8 @@ class Source(Base):
         proc = subprocess.Popen(args=args,
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
-                                stderr=subprocess.DEVNULL)
+                                stderr=subprocess.DEVNULL,
+                                cwd=self.nvim.eval('getcwd()'))
 
         result, errs = proc.communicate(src, timeout=30)
 
