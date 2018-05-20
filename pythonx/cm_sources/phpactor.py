@@ -13,11 +13,11 @@ from cm import register_source, getLogger, Base
 register_source(name='phpactor',
                 priority=9,
                 abbreviation='php',
-                word_pattern=r'[$\w]+',
+                word_pattern=r'[\w]+',
                 scoping=True,
                 scopes=['php'],
                 early_cache=1,
-                cm_refresh_patterns=[r'-\>', r'::'],)
+                cm_refresh_patterns=[r'$', r'-\>', r'::'],)
 
 import json
 import os
