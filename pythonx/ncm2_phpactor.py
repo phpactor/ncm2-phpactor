@@ -1,59 +1,38 @@
 # -*- coding: utf-8 -*-
 
-# For debugging, use this command to start neovim:
-#
-# NVIM_PYTHON_LOG_FILE=nvim.log NVIM_PYTHON_LOG_LEVEL=INFO nvim
-#
-#
-# Please register source before executing any other code, this allow cm_core to
-# read basic information about the source without loading the whole module, and
-# modules required by this module
-from cm import register_source, getLogger, Base
-
-register_source(name='phpactor',
-                priority=9,
-                abbreviation='php',
-                word_pattern=r'[\w]+',
-                scoping=True,
-                scopes=['php'],
-                early_cache=1,
-                cm_refresh_patterns=[r'$', r'-\>', r'::'],)
-
-import json
-import os
-import subprocess
-import glob
+import vim
+from ncm2 import Ncm2Source, getLogger
 import re
+
+import subprocess
+from ncm2 import Popen
+import json
 
 logger = getLogger(__name__)
 
 
-class Source(Base):
+class Source(Ncm2Source):
 
-    def __init__(self, nvim):
-        super(Source, self).__init__(nvim)
+    def on_complete(self, ctx, lines, cwd, phpactor_complete):
+        src = "\n".join(lines)
+        src = self.get_src(src, ctx)
 
-        self._phpactor = nvim.eval(r"""globpath(&rtp, 'bin/phpactor', 1)""")
-
-        if not self._phpactor:
-            self.message('error', 'phpactor not found, please install https://github.com/phpactor/phpactor')
-
-    def cm_refresh(self, info, ctx, *args):
-
-        src = self.get_src(ctx).encode('utf-8')
         lnum = ctx['lnum']
-        col = ctx['col']
-        filepath = ctx['filepath']
-        startcol = ctx['startcol']
 
-        args = ['php', self._phpactor, 'complete', '--format=json', 'stdin', '%s' % self.get_pos(lnum, col, src)]
-        proc = subprocess.Popen(args=args,
-                                stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.DEVNULL,
-                                cwd=self.nvim.eval('getcwd()'))
+        # use byte addressing
+        bcol = ctx['bcol']
+        src = src.encode()
 
-        result, errs = proc.communicate(src, timeout=30)
+        pos = self.lccol2pos(lnum, bcol, src)
+        args = phpactor_complete
+        args += [str(pos)]
+
+        proc = Popen(args=args,
+                     stdin=subprocess.PIPE,
+                     stdout=subprocess.PIPE,
+                     stderr=subprocess.DEVNULL)
+
+        result, errs = proc.communicate(src, timeout=5)
 
         result = result.decode()
 
@@ -116,10 +95,21 @@ class Source(Base):
                 ph0 = self.snippet_placeholder(0)
                 snippet = '%s(%s)%s' % (word, snip_args, ph0)
 
-                item['snippet'] = snippet
+                item['user_data'] = {'snippet': snippet, 'is_snippet': 1}
 
             matches.append(item)
 
-        logger.debug("startcol [%s] matches: [%s]", startcol, matches)
+        self.complete(ctx, ctx['startccol'], matches)
 
-        self.complete(info, ctx, startcol, matches)
+    def snippet_placeholder(self, num, txt=''):
+        txt = txt.replace('\\', '\\\\')
+        txt = txt.replace('$', r'\$')
+        txt = txt.replace('}', r'\}')
+        if txt == '':
+            return '${%s}' % num
+        return '${%s:%s}' % (num, txt)
+
+
+source = Source(vim)
+
+on_complete = source.on_complete
