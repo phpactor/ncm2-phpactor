@@ -8,8 +8,19 @@
 Assuming you're using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-" requires phpactor
-Plug 'phpactor/phpactor' ,  {'do': 'composer install'}
-Plug 'roxma/ncm2-phpactor', {}
+" Include Phpactor
+Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+
+" Require ncm2 and this plugin
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'phpactor/ncm2-phpactor'
+```
+
+Additionally you will need to set the following options:
+
+```vim
+autocmd BufEnter * call ncm2#enable_for_buffer()
+set completeopt=noinsert,menuone,noselect
 ```
 
