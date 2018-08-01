@@ -13,6 +13,7 @@ let g:ncm2_phpactor#source = extend(get(g:, 'ncm2_phpactor#source', {}), {
             \ 'ready': 0,
             \ 'priority': 9,
             \ 'mark': 'b',
+            \ 'scope': ['php'],
             \ 'word_pattern': '[\$\w][\w]*',
             \ 'complete_pattern': ['\$', '-\>', '::'],
             \ 'subscope_enable': 1,
