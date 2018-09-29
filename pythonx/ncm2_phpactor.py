@@ -62,7 +62,7 @@ class Source(Ncm2Source):
             # snippet support
             m = re.search(r'(\w+\s+)?\w+\((.*)\)', menu)
 
-            if m and t == 'f':
+            if m and (t == 'function' or t == 'method'):
 
                 params = m.group(2)
 
