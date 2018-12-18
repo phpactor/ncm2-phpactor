@@ -40,6 +40,9 @@ class Source(Ncm2Source):
 
         result = json.loads(result)
 
+        if not result or not result.get('suggestions', None):
+            return
+
         # {
         #     "suggestions": [
         #         {
