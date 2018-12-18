@@ -53,7 +53,7 @@ class Source(Ncm2Source):
         matches = []
 
         for e in result['suggestions']:
-            menu = e['info']
+            menu = e['short_description']
             word = e['name']
             t = e['type']
 
