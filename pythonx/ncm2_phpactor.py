@@ -13,6 +13,10 @@ logger = getLogger(__name__)
 
 class Source(Ncm2Source):
 
+    def __init__(self, nvim):
+        super(Source, self).__init__(nvim)
+        self.completion_timeout = self.nvim.eval('g:ncm2_phpactor_timeout') or 5
+
     def on_complete(self, ctx, lines, cwd, phpactor_complete):
         src = "\n".join(lines)
         src = self.get_src(src, ctx)
@@ -32,7 +36,7 @@ class Source(Ncm2Source):
                      stdout=subprocess.PIPE,
                      stderr=subprocess.DEVNULL)
 
-        result, errs = proc.communicate(src, timeout=5)
+        result, errs = proc.communicate(src, timeout=self.completion_timeout)
 
         result = result.decode()
 
