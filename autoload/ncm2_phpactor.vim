@@ -3,6 +3,8 @@ if get(s:, 'loaded', 0)
 endif
 let s:loaded = 1
 
+let g:ncm2_phpactor_timeout = get(g:, 'ncm2_phpactor_timeout', 5)
+
 let g:ncm2_phpactor#proc = yarp#py3({
     \ 'module': 'ncm2_phpactor',
     \ 'on_load': { -> ncm2#set_ready(g:ncm2_phpactor#source)}
