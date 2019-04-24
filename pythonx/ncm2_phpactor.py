@@ -64,7 +64,7 @@ class Source(Ncm2Source):
             word = e['name']
             t = e['type']
 
-            item = dict(word=word, menu=menu)
+            item = dict(word=word, menu=menu, info=menu)
 
             # snippet support
             m = re.search(r'(\w+\s+)?\w+\((.*)\)', menu)
