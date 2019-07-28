@@ -45,3 +45,28 @@ func! ncm2_phpactor#on_complete(ctx)
                 \       ])
 endfunc
 
+function! ncm2_phpactor#_completeImportClassFromNcm2(completedItem)
+
+    if !has_key(a:completedItem, "word") || !has_key(a:completedItem, "user_data")
+        return
+    endif
+
+    let user_data = json_decode(a:completedItem['user_data'])
+
+    if (user_data['source'] !=# "phpactor")
+        return
+    endif
+
+    if !empty(get(a:completedItem, "info", ""))
+        call phpactor#rpc("import_class", {
+                    \ "qualified_name": a:completedItem['info'],
+                    \ "offset": phpactor#_offset(),
+                    \ "source": phpactor#_source(),
+                    \ "path": expand('%:p')})
+    endif
+
+endfunction
+
+if g:phpactorOmniAutoClassImport == v:true
+    autocmd CompleteDone *.php call ncm2_phpactor#_completeImportClassFromNcm2(v:completed_item)
+endif
