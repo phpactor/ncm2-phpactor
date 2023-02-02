@@ -87,6 +87,8 @@ class Source(Ncm2Source):
                             # skip params with default value
                             break
                         else:
+                            if not re.search(r'\$\w+', param):
+                                break
                             param = re.search(r'\$\w+', param).group()
                             ph = self.snippet_placeholder(num, param)
                             placeholders.append(ph)
